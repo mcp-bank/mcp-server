@@ -10,6 +10,7 @@ import (
 
 	mcpServerPkg "github.com/mark3labs/mcp-go/server"
 	"github.com/mcp-bank/mcp-server/internal/broker"
+	"github.com/mcp-bank/mcp-server/internal/cache"
 	"github.com/mcp-bank/mcp-server/internal/server"
 	"github.com/mcp-bank/mcp-server/internal/tools"
 )
@@ -29,7 +30,8 @@ func main() {
 	if err != nil {
 		return
 	}
-	service := tools.New(grpcClient)
+	rdb := cache.New()
+	service := tools.New(grpcClient, rdb)
 	mcpServer := server.New(service)
 	mcpServer.RegisterTools()
 	sseServer := mcpServerPkg.NewSSEServer(mcpServer.McpServer, mcpServerPkg.WithBaseURL("http://mcp-server:8080")) // TODO убрать хардкод
@@ -43,9 +45,10 @@ func main() {
 	}()
 	<-quit
 	slog.Info("graceful shutdown")
-	err = sseServer.Shutdown(context.Background())
-	if err != nil {
-		err = fmt.Errorf("cannot properly shutdown %w", err)
-		return
+	if err = rdb.Close(); err != nil {
+		err = fmt.Errorf("cannot properly shutdown redis %w", err)
+	}
+	if err = sseServer.Shutdown(context.Background()); err != nil {
+		err = fmt.Errorf("cannot properly shutdown server %w", err)
 	}
 }
