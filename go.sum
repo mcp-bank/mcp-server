@@ -16,6 +16,8 @@ github.com/mark3labs/mcp-go v0.52.0 h1:uRSzupNSUyPGDpF4owY5X4zEpACPwBnlM3FAFuXN6
 github.com/mark3labs/mcp-go v0.52.0/go.mod h1:Zg9cB2HdwdMMVgY0xtTzq3KvYIOJQDsaut+jWjwDaQY=
 github.com/mcp-bank/proto v0.0.2 h1:3ZF5ffqLX4BkOfISiAVjL2pBj2DQI8HGC1FCLw7Tvds=
 github.com/mcp-bank/proto v0.0.2/go.mod h1:e2XzFAQ97aMR1rcglN6mAHVkJwRqm/dCZ3rZTskxi5I=
+github.com/mcp-bank/proto v0.0.3 h1:6UfEs/zMAnRL+rK09Jq0IF7ivt4Bt3JoA1X3lGXZjyY=
+github.com/mcp-bank/proto v0.0.3/go.mod h1:e2XzFAQ97aMR1rcglN6mAHVkJwRqm/dCZ3rZTskxi5I=
 github.com/santhosh-tekuri/jsonschema/v6 v6.0.2 h1:KRzFb2m7YtdldCEkzs6KqmJw4nqEVZGK7IN2kJkjTuQ=
 github.com/santhosh-tekuri/jsonschema/v6 v6.0.2/go.mod h1:JXeL+ps8p7/KNMjDQk3TCwPpBy0wYklyWTfbkIzdIFU=
 github.com/spf13/cast v1.7.1 h1:cuNEagBQEHWN1FnbGEjCXL2szYEXqfJPbP2HNUaca9Y=

@@ -2,7 +2,7 @@ module github.com/mcp-bank/mcp-server
 
 go 1.26.1
 
-require github.com/mcp-bank/proto v0.0.2
+require github.com/mcp-bank/proto v0.0.3
 
 require (
 	github.com/google/jsonschema-go v0.4.2 // indirect
