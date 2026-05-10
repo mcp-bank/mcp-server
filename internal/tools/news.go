@@ -33,6 +33,7 @@ func (s *Service) HandleGetNews(ctx context.Context, request mcp.CallToolRequest
 	get := s.rdb.Get(ctx, isin)
 	if err = get.Err(); err != nil {
 		var news *brokerv1.GetNewsResponse
+		start := time.Now()
 		news, err = s.grpcClient.GetNews(ctx, &brokerv1.GetNewsRequest{Isin: isin})
 		if err != nil {
 			err = fmt.Errorf("GetNews: %w", err)
@@ -44,12 +45,21 @@ func (s *Service) HandleGetNews(ctx context.Context, request mcp.CallToolRequest
 			return nil, err
 		}
 		s.rdb.Set(ctx, isin, bytes, time.Hour*24)
+		slog.Info("without redis",
+			"start_time", start,
+			"duration", time.Since(start),
+		)
 		return mcp.NewToolResultText(string(bytes)), nil
 	}
+	start := time.Now()
 	news, err := get.Result()
 	if err != nil {
 		err = fmt.Errorf("get.Result: %w", err)
 		return nil, err
 	}
+	slog.Info("with redis",
+		"start_time", start,
+		"duration", time.Since(start),
+	)
 	return mcp.NewToolResultText(news), nil
 }

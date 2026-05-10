@@ -30,7 +30,10 @@ func main() {
 	if err != nil {
 		return
 	}
-	rdb := cache.New()
+	rdb, err := cache.New()
+	if err != nil {
+		return
+	}
 	service := tools.New(grpcClient, rdb)
 	mcpServer := server.New(service)
 	mcpServer.RegisterTools()
