@@ -31,7 +31,14 @@ func (s *Server) RegisterTools() {
 			mcp.Required(),
 			mcp.Description("ISIN")),
 	)
+	getAccountBalance := mcp.NewTool("get_account_balance",
+		mcp.WithDescription("Get user account_balance"),
+		mcp.WithString("user_id",
+			mcp.Required(),
+			mcp.Description("User ID")),
+	)
 
 	s.McpServer.AddTool(getPortfolio, s.tools.HandleGetPortfolio)
 	s.McpServer.AddTool(getStockPrice, s.tools.HandleGetStockPrice)
+	s.McpServer.AddTool(getAccountBalance, s.tools.HandleGetAccountBalance)
 }

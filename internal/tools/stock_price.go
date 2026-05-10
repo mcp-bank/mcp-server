@@ -2,33 +2,36 @@ package tools
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
+	"log/slog"
 
 	"github.com/mark3labs/mcp-go/mcp"
+	"github.com/mcp-bank/proto/gen/brokerv1"
 )
 
 func (s *Service) HandleGetStockPrice(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-	//var err error
-	//defer func() {
-	//	if err != nil {
-	//		slog.Error("HandleGetPortfolio failed:",
-	//			"err", err)
-	//	}
-	//}()
-	//
-	//userID, ok := request.GetArguments()["user_id"].(string)
-	//if !ok {
-	//	err = fmt.Errorf("user_id is required")
-	//	return nil, err
-	//}
-	//portfolio, err := s.grpcClient.GetPortfolio(ctx, &brokerv1.GetPortfolioRequest{Uuid: userID})
-	//if err != nil {
-	//	err = fmt.Errorf("GetPortfolio: %w", err)
-	//	return nil, err
-	//}
-	//bytes, err := json.Marshal(portfolio)
-	//if err != nil {
-	//	return nil, err
-	//}
-	//return mcp.NewToolResultText(string(bytes)), nil
-	return nil, nil
+	var err error
+	defer func() {
+		if err != nil {
+			slog.Error("HandleGetStockPrice failed:",
+				"err", err)
+		}
+	}()
+
+	isin, ok := request.GetArguments()["isin"].(string)
+	if !ok {
+		err = fmt.Errorf("isin is required")
+		return nil, err
+	}
+	portfolio, err := s.grpcClient.GetStockPrice(ctx, &brokerv1.GetStockPriceRequest{Isin: isin})
+	if err != nil {
+		err = fmt.Errorf("GetStockPrice: %w", err)
+		return nil, err
+	}
+	bytes, err := json.Marshal(portfolio)
+	if err != nil {
+		return nil, err
+	}
+	return mcp.NewToolResultText(string(bytes)), nil
 }
