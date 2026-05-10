@@ -19,9 +19,14 @@ func (s *Service) HandleGetPortfolio(ctx context.Context, request mcp.CallToolRe
 		}
 	}()
 
-	userID, ok := request.GetArguments()["user_id"].(string)
-	if !ok {
+	rawUserID, exists := request.GetArguments()["user_id"]
+	if !exists {
 		err = fmt.Errorf("user_id is required")
+		return nil, err
+	}
+	userID, ok := rawUserID.(string)
+	if !ok {
+		err = fmt.Errorf("user_id must be string, got %T", rawUserID)
 		return nil, err
 	}
 	portfolio, err := s.grpcClient.GetPortfolio(ctx, &brokerv1.GetPortfolioRequest{Uuid: userID})

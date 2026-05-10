@@ -19,9 +19,14 @@ func (s *Service) HandleGetStockPrice(ctx context.Context, request mcp.CallToolR
 		}
 	}()
 
-	isin, ok := request.GetArguments()["isin"].(string)
-	if !ok {
+	rawIsin, exists := request.GetArguments()["isin"]
+	if !exists {
 		err = fmt.Errorf("isin is required")
+		return nil, err
+	}
+	isin, ok := rawIsin.(string)
+	if !ok {
+		err = fmt.Errorf("isin must be string, got %T", rawIsin)
 		return nil, err
 	}
 	portfolio, err := s.grpcClient.GetStockPrice(ctx, &brokerv1.GetStockPriceRequest{Isin: isin})
