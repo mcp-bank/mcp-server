@@ -11,6 +11,7 @@ import (
 	mcpServerPkg "github.com/mark3labs/mcp-go/server"
 	"github.com/mcp-bank/mcp-server/internal/broker"
 	"github.com/mcp-bank/mcp-server/internal/cache"
+	"github.com/mcp-bank/mcp-server/internal/messaging"
 	"github.com/mcp-bank/mcp-server/internal/server"
 	"github.com/mcp-bank/mcp-server/internal/tools"
 )
@@ -30,11 +31,16 @@ func main() {
 	if err != nil {
 		return
 	}
+	err = messaging.Init()
+	if err != nil {
+		return
+	}
+	kafka := messaging.New()
 	rdb, err := cache.New()
 	if err != nil {
 		return
 	}
-	service := tools.New(grpcClient, rdb)
+	service := tools.New(grpcClient, rdb, kafka)
 	mcpServer := server.New(service)
 	mcpServer.RegisterTools()
 	sseServer := mcpServerPkg.NewSSEServer(mcpServer.McpServer, mcpServerPkg.WithBaseURL("http://mcp-server:8080")) // TODO убрать хардкод
@@ -48,6 +54,9 @@ func main() {
 	}()
 	<-quit
 	slog.Info("graceful shutdown")
+	if err = kafka.GracefulShutdown(); err != nil {
+		err = fmt.Errorf("cannot properly shutdown kafka %w", err)
+	}
 	if err = rdb.Close(); err != nil {
 		err = fmt.Errorf("cannot properly shutdown redis %w", err)
 	}

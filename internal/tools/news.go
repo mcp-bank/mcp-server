@@ -8,11 +8,19 @@ import (
 	"time"
 
 	"github.com/mark3labs/mcp-go/mcp"
+	"github.com/mcp-bank/mcp-server/internal/messaging"
 	"github.com/mcp-bank/proto/gen/brokerv1"
 )
 
 func (s *Service) HandleGetNews(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 	var err error
+	defer func(kafka *messaging.Kafka, ctx context.Context, tool string) {
+		err = kafka.PublishNotification(ctx, tool)
+		if err != nil {
+			slog.Error("HandleGetNews:",
+				"err", err)
+		}
+	}(s.kafka, ctx, "HandleGetNews")
 	defer func() {
 		if err != nil {
 			slog.Error("HandleGetNews:",
