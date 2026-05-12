@@ -13,7 +13,7 @@ type Server struct {
 
 func New(tools *tools.Service) *Server {
 	return &Server{
-		McpServer: server.NewMCPServer("mcp-bank/mcp-server", "v0.0.1"), // TODO убрать хардкод
+		McpServer: server.NewMCPServer("mcp-bank/mcp-server", "v0.0.1", server.WithRecovery()), // TODO убрать хардкод
 		tools:     tools,
 	}
 }
